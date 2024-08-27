@@ -3,10 +3,15 @@ import {
   UserCircleIcon,
   TableCellsIcon,
   InformationCircleIcon,
-  ServerStackIcon,
-  RectangleStackIcon,
+  CreditCardIcon,
+  UserIcon ,
 } from "@heroicons/react/24/solid";
 import { Home, Profile, Tables, Notifications } from "@/pages/dashboard";
+import View from "./pages/customer/view";
+
+import ViewSalesman from './pages/salesman/ViewSalesman';
+import Payment from "./pages/payment/payment";
+
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -22,6 +27,25 @@ export const routes = [
         path: "/home",
         element: <Home />,
       },
+      {
+        icon: <UserIcon  {...icon} />,
+        name: "Customer",
+        path: "/customer",
+        element: <View />,
+      },
+      {
+        icon: <UserCircleIcon {...icon} />,
+        name: "Salesman",
+        path: "/salesman",
+        element: <ViewSalesman />,
+      },
+      {
+        icon: <CreditCardIcon {...icon} />,
+        name: "Payment",
+        path: "/payment",
+        element: <Payment />,
+      },
+      
       {
         icon: <UserCircleIcon {...icon} />,
         name: "profile",
