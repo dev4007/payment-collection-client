@@ -22,23 +22,29 @@ export function SignIn() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const auth = useSelector(state => state.authReducer.user); // Adjust path based on your store structure
+  const auth = useSelector(state => state.authReducer.user?.user); // Adjust path based on your store structure
 
   const handleLogin = async (values) => {
     const { email, password } = values;
-    const success = await dispatch(login(email, password));
-
-    if (success === true) {
-      if (auth.role === 'admin')
-       navigate('/dashboard/home')
-      else if (auth.role === 'salesman')
-        navigate("/salesman-form");
-    } else if (auth.role === 'customer') {
-      navigate("/customer")
+    const result = await dispatch(login(email, password));
+  
+    // Check the result of the login action
+    if (result.success) {
+      const { role } = result.user; // Ensure the result has the role information
+      if (role === 'admin') {
+        navigate('/admin/home');
+      } else if (role === 'salesman') {
+        navigate("/salesman/home");
+      } else if (role === 'customer') {
+        navigate("/customer");
+      } else {
+        toast.error("No User Available");
+      }
     } else {
-      toast.error("No User Available")
+      toast.error("Login Failed");
     }
   };
+  
 
   return (
     <section className="flex items-center justify-center h-screen">
@@ -88,10 +94,6 @@ export function SignIn() {
               <Button type="submit" className="mt-6" fullWidth>
                 Sign In
               </Button>
-              <Typography variant="paragraph" className="text-center text-blue-gray-500 font-medium mt-4">
-                Not registered?
-                <Link to="/sign-up" className="text-gray-900 ml-1">Create account</Link>
-              </Typography>
             </Form>
           )}
         </Formik>

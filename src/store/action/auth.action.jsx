@@ -29,8 +29,7 @@ export const login = (email, password,role) => {
         type: 'LOGIN',
         payload: { user, token },
       });
-      toast.success('Login successful!');
-      return true;
+      return { success: true, user }; // Return user data including role
     } catch (error) {
       toast.error(error.response.data.message || "Something went wrong")
       return false;

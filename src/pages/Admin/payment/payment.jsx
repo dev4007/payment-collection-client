@@ -1,41 +1,62 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   CardHeader,
   CardBody,
-  Typography,
+  Typography,Chip
 } from "@material-tailwind/react";
+import { paymentHistory } from '@/store/action/payment.action';
+import { useDispatch, useSelector } from 'react-redux';
 
-export const paymentsData = [
-    {
-      id: 1,
-      salesmanName: "John Doe",
-      customerName: "Jane Smith",
-      amount: "$500",
-      date: "01 Jan 2023",
-    },
-    {
-      id: 2,
-      salesmanName: "Alice Johnson",
-      customerName: "Robert Brown",
-      amount: "$350",
-      date: "15 Feb 2023",
-    },
+// export const paymentsData = [
+//     {
+//       id: 1,
+//       salesmanName: "John Doe",
+//       customerName: "Jane Smith",
+//       amount: "$500",
+//       date: "01 Jan 2023",
+//     },
+//     {
+//       id: 2,
+//       salesmanName: "Alice Johnson",
+//       customerName: "Robert Brown",
+//       amount: "$350",
+//       date: "15 Feb 2023",
+//     },
    
-    // Add more payment entries as needed
-];
+//     // Add more payment entries as needed
+// ];
 
-const PAGE_SIZE = 1;
+const PAGE_SIZE = 5;
 
 const Payment = () => {
+
   const [currentPage, setCurrentPage] = useState(1);
+
+  const dispatch = useDispatch()
+
+  const paymentsData = useSelector((state) => state.paymentReducer.paymentHistory);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await dispatch(paymentHistory());
+    };
+  
+    fetchData();
+  }, []); // Empty dependency array ensures it runs only once when the component mounts.
+
+  const formatDateTime = (isoDate) => {
+    const dateObj = new Date(isoDate);
+    return `${dateObj.toLocaleDateString()} ${dateObj.toLocaleTimeString()}`;
+  };
+  
   const totalPages = Math.ceil(paymentsData.length / PAGE_SIZE);
 
   const currentData = paymentsData.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE
   );
-
+ 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -78,7 +99,7 @@ const Payment = () => {
           <table className="w-full min-w-[640px] table-auto">
             <thead>
               <tr>
-                {["Salesman Name", "Customer Name", "Amount", "Date"].map((el) => (
+                {["Salesman Name", "Customer Name", "Amount", "Date","Status"].map((el) => (
                   <th
                     key={el}
                     className="border-b border-blue-gray-50 py-3 px-5 text-left"
@@ -95,7 +116,7 @@ const Payment = () => {
             </thead>
             <tbody>
               {currentData.map((payment, key) => {
-                const { id, salesmanName, customerName, amount, date } = payment;
+                const { _id, salesman,customerName, amount, date,customerVerify } = payment;
                 const className = `py-3 px-5 ${
                   key === currentData.length - 1
                     ? ""
@@ -103,19 +124,19 @@ const Payment = () => {
                 }`;
 
                 return (
-                  <tr key={id}>
+                  <tr key={_id}>
                     <td className={className}>
                       <Typography
                         variant="small"
                         color="blue-gray"
                         className="font-semibold"
                       >
-                        {salesmanName}
+                        {salesman.name}
                       </Typography>
                     </td>
                     <td className={className}>
                       <Typography className="text-xs font-normal text-blue-gray-500">
-                        {customerName}
+                        {customerName.name}
                       </Typography>
                     </td>
                     <td className={className}>
@@ -125,9 +146,17 @@ const Payment = () => {
                     </td>
                     <td className={className}>
                       <Typography className="text-xs font-semibold text-blue-gray-600">
-                        {date}
+                        {formatDateTime(date)}
                       </Typography>
                     </td>
+                    <td className={className}>
+                    <Chip
+                          variant="gradient"
+                          color={customerVerify === true  ? "green" : "red"}
+                          value={customerVerify === true  ? "Success" : "Pending"}
+                          className="py-0.5 px-2 text-[11px] font-medium w-fit"
+                        />
+                  </td>
                   </tr>
                 );
               })}

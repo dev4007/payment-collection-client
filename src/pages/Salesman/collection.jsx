@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   CardHeader,
@@ -6,42 +6,39 @@ import {
   Typography,
   Button,
 } from "@material-tailwind/react";
-import AddCustomerDialog from '@/components/customer/AddCustomerDialog';
-import EditCustomerDialog from '@/components/customer/EditCustomerDialog';
-import ViewCustomerDialog from '@/components/customer/ViewCustomerDialog';
-import DeleteCustomerDialog from '@/components/customer/DeleteCustomerDialog';
-
-export const customersData = [
-    {
-      id: 1,
-      name: "John Doe",
-      email: "johndoe@example.com",
-      mobile: "+1 (555) 123-4567",
-      date: "01 Jan 2023",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "janesmith@example.com",
-      mobile: "+1 (555) 765-4321",
-      date: "15 Feb 2023",
-    },
-    // Add more customer entries as needed
-  ];
+import AddCollectionDialog from '@/components/collection/AddCollectionDialog';
+import EditCollectionDialog from '@/components/collection/EditCollectionDialog';
+import ViewCollectionDialog from '@/components/collection/ViewCollectionDialog';
+import DeleteCollectionDialog from '@/components/collection/DeleteCollectionDialog';
+import { useDispatch, useSelector } from 'react-redux';
+import { collection } from '@/store/action/collection.action';
 
 const PAGE_SIZE = 5;
 
-const View = () => {
+const Collection = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedCustomerId, setSelectedCustomerId] = useState(null);
+  const [selectedCollectionId, setSelectedCollectionId] = useState(null);
+  
 
-  const totalPages = Math.ceil(customersData.length / PAGE_SIZE);
+  const dispatch = useDispatch()
 
-  const currentData = customersData.slice(
+  const collectionData = useSelector((state) => state.collectionReducer.collectionList);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await dispatch(collection());
+    };
+  
+    fetchData();
+  }, []); // Empty dependency array ensures it runs only once when the component mounts.
+  
+  const totalPages = Math.ceil(collectionData.length / PAGE_SIZE);
+
+  const currentData = collectionData.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE
   );
@@ -59,7 +56,7 @@ const View = () => {
   };
 
   const handleOpenEditDialog = (id) => {
-    setSelectedCustomerId(id);
+    setSelectedCollectionId(id);
     setEditDialogOpen(true);
   };
 
@@ -68,7 +65,7 @@ const View = () => {
   };
 
   const handleOpenViewDialog = (id) => {
-    setSelectedCustomerId(id);
+    setSelectedCollectionId(id);
     setViewDialogOpen(true);
   };
 
@@ -77,7 +74,7 @@ const View = () => {
   };
 
   const handleOpenDeleteDialog = (id) => {
-    setSelectedCustomerId(id);
+    setSelectedCollectionId(id);
     setDeleteDialogOpen(true);
   };
 
@@ -85,26 +82,24 @@ const View = () => {
     setDeleteDialogOpen(false);
   };
 
-  const handleAddCustomer = (newCustomer) => {
-    // Logic to add the new customer
-    console.log('New Customer:', newCustomer);
+  const handleAddCollection = (newCollection) => {
+    // Logic to add the new Collection
+    console.log('New Collection:', newCollection);
     handleCloseAddDialog();
   };
 
-  const handleEditCustomer = (updatedCustomer) => {
-    // Logic to update the customer by ID
-    console.log('Updated Customer:', updatedCustomer);
+  const handleEditCollection = (updatedCollection) => {
+    // Logic to update the Collection by ID
+    console.log('Updated Collection:', updatedCollection);
     // handleCloseEditDialog();
   };
 
-  const handleDeleteCustomer = () => {
-    // Logic to delete the customer by ID
-    console.log('Deleted Customer ID:', selectedCustomerId);
+  const handleDeleteCollection = () => {
     handleCloseDeleteDialog();
   };
 
-  const getCustomerById = (id) => {
-    return customersData.find(customer => customer.id === id);
+  const getCollectionById = (id) => {
+    return collectionData.find(collection => collection._id === id);
   };
 
   return (
@@ -112,7 +107,7 @@ const View = () => {
       <Card>
         <CardHeader variant="gradient" color="gray" className="mb-8 p-6 flex justify-between items-center">
           <Typography variant="h6" color="white">
-            Customer List
+            Collection List
           </Typography>
           <Button
             color="light-blue"
@@ -120,14 +115,14 @@ const View = () => {
             className="ml-auto"
             onClick={handleOpenAddDialog}
           >
-            Add Customer
+            Add Collection
           </Button>
         </CardHeader>
         <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
           <table className="w-full min-w-[640px] table-auto">
             <thead>
               <tr>
-                {["Name", "Email", "Mobile", "Date", "Actions"].map((el) => (
+                {["Customer Name", "Amount", "Date", "Actions"].map((el) => (
                   <th
                     key={el}
                     className="border-b border-blue-gray-50 py-3 px-5 text-left"
@@ -143,8 +138,8 @@ const View = () => {
               </tr>
             </thead>
             <tbody>
-              {currentData.map((customer, key) => {
-                const { id, name, email, mobile, date } = customer;
+              {currentData.map((collection, key) => {
+                const { _id, customerName, amount, date } = collection;
                 const className = `py-3 px-5 ${
                   key === currentData.length - 1
                     ? ""
@@ -152,51 +147,47 @@ const View = () => {
                 }`;
 
                 return (
-                  <tr key={id}>
+                  <tr key={_id}>
                     <td className={className}>
                       <Typography
                         variant="small"
                         color="blue-gray"
                         className="font-semibold"
                       >
-                        {name}
+                        {customerName}
                       </Typography>
                     </td>
                     <td className={className}>
                       <Typography className="text-xs font-normal text-blue-gray-500">
-                        {email}
+                        {amount}
                       </Typography>
                     </td>
                     <td className={className}>
                       <Typography className="text-xs font-normal text-blue-gray-500">
-                        {mobile}
-                      </Typography>
-                    </td>
-                    <td className={className}>
-                      <Typography className="text-xs font-semibold text-blue-gray-600">
                         {date}
                       </Typography>
                     </td>
+                  
                     <td className={className}>
                       <div className="flex gap-2">
                         <Button
                           color="light-blue"
                           size="sm"
-                          onClick={() => handleOpenViewDialog(id)}
+                          onClick={() => handleOpenViewDialog(_id)}
                         >
                           View
                         </Button>
                         <Button
                           color="light-blue"
                           size="sm"
-                          onClick={() => handleOpenEditDialog(id)}
+                          onClick={() => handleOpenEditDialog(_id)}
                         >
                           Edit
                         </Button>
                         <Button
                           color="red"
                           size="sm"
-                          onClick={() => handleOpenDeleteDialog(id)}
+                          onClick={() => handleOpenDeleteDialog(_id)}
                         >
                           Delete
                         </Button>
@@ -227,32 +218,31 @@ const View = () => {
         </div>
       </Card>
 
-      <AddCustomerDialog
+      <AddCollectionDialog
         open={dialogOpen}
         onClose={handleCloseAddDialog}
-        onAddCustomer={handleAddCustomer}
-      />
+       />
 
-      <EditCustomerDialog
+      <EditCollectionDialog
         open={editDialogOpen}
         onClose={handleCloseEditDialog}
-        customer={getCustomerById(selectedCustomerId)}
-        onEditCustomer={handleEditCustomer}
+        collectionData={getCollectionById(selectedCollectionId)}
+    
       />
 
-      <ViewCustomerDialog
+      <ViewCollectionDialog
         open={viewDialogOpen}
         onClose={handleCloseViewDialog}
-        customer={getCustomerById(selectedCustomerId)}
+        collection={getCollectionById(selectedCollectionId)}
       />
 
-      <DeleteCustomerDialog
+      <DeleteCollectionDialog
         open={deleteDialogOpen}
         onClose={handleCloseDeleteDialog}
-        onDeleteCustomer={handleDeleteCustomer}
+        onDeleteCollection={selectedCollectionId}
       />
     </div>
   );
 };
 
-export default View;
+export default Collection;

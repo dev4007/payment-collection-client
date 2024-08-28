@@ -12,31 +12,31 @@ import {
 import { useDispatch } from 'react-redux';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { addCustomer, customer } from '@/store/action/customer.action';
+import { addCollection, collection } from '@/store/action/collection.action';
 
 // Validation schema using Yup
 const validationSchema = Yup.object({
-  name: Yup.string().required('Name is required'),
-  email: Yup.string().email('Invalid email format').required('Email is required'),
-  mobile: Yup.string().required('Mobile number is required'),
+  customerName: Yup.string().required('Name is required'),
+  amount: Yup.string().required('Amount is required'),
+  date: Yup.string().required('Date is required'),
 });
 
-const AddCustomerDialog = ({ open, onClose }) => {
+const AddCollectionDialog = ({ open, onClose }) => {
   const dispatch = useDispatch();
 
   const fetchData = async () => {
-    await dispatch(customer());
+    await dispatch(collection());
   };
 
   const formik = useFormik({
     initialValues: {
-      name: '',
-      email: '',
-      mobile: '',
+      customerName: '',
+      amount: '',
+      date: '',
     },
     validationSchema,
     onSubmit: async (values, { resetForm }) => {
-      const success = await dispatch(addCustomer({ ...values, role: 'customer' }));
+      const success = await dispatch(addCollection({ ...values }));
       if (success) {
         resetForm(); // Clear the form on success
         onClose(); // Close dialog if customer was added successfully
@@ -47,42 +47,46 @@ const AddCustomerDialog = ({ open, onClose }) => {
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Add New Customer</DialogTitle>
+      <DialogTitle>Add New Collection</DialogTitle>
       <DialogContent>
         <form onSubmit={formik.handleSubmit} className="space-y-4 mt-3">
           <TextField
-            label="Name"
-            name="name"
-            value={formik.values.name}
+            label="CustomerName"
+            name="customerName"
+            value={formik.values.customerName}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             fullWidth
             required
-            error={formik.touched.name && Boolean(formik.errors.name)}
-            helperText={formik.touched.name && formik.errors.name}
+            error={formik.touched.customerName && Boolean(formik.errors.customerName)}
+            helperText={formik.touched.customerName && formik.errors.customerName}
           />
           <TextField
-            label="Email"
-            name="email"
-            type="email"
-            value={formik.values.email}
+            label="Amount"
+            name="amount"
+            value={formik.values.amount}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             fullWidth
             required
-            error={formik.touched.email && Boolean(formik.errors.email)}
-            helperText={formik.touched.email && formik.errors.email}
+            error={formik.touched.amount && Boolean(formik.errors.amount)}
+            helperText={formik.touched.amount && formik.errors.amount}
           />
+       
           <TextField
-            label="Mobile"
-            name="mobile"
-            value={formik.values.mobile}
+            label="Date"
+            name="date"
+            type="date"
+            value={formik.values.date}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             fullWidth
+            InputLabelProps={{
+              shrink: true,
+            }}
             required
-            error={formik.touched.mobile && Boolean(formik.errors.mobile)}
-            helperText={formik.touched.mobile && formik.errors.mobile}
+            error={formik.touched.amount && Boolean(formik.errors.amount)}
+            helperText={formik.touched.amount && formik.errors.amount}
           />
         </form>
       </DialogContent>
@@ -115,4 +119,4 @@ const AddCustomerDialog = ({ open, onClose }) => {
   );
 };
 
-export default AddCustomerDialog;
+export default AddCollectionDialog;

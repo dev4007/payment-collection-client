@@ -6,11 +6,13 @@ import {
   CreditCardIcon,
   UserIcon ,
 } from "@heroicons/react/24/solid";
-import { Home, Profile, Tables, Notifications } from "@/pages/dashboard";
-import View from "./pages/customer/view";
+import { Home, Profile, Tables, Notifications } from "@/pages/Admin/dashboard";
+import View from "./pages/Admin/customer/view";
 
-import ViewSalesman from './pages/salesman/ViewSalesman';
-import Payment from "./pages/payment/payment";
+import ViewSalesman from './pages/Admin/salesman/ViewSalesman';
+import Payment from "./pages/Admin/payment/payment";
+import Collection from "./pages/Salesman/collection";
+import HomeSalesman from "./pages/Salesman/Dashboard/home";
 
 
 const icon = {
@@ -19,7 +21,7 @@ const icon = {
 
 export const routes = [
   {
-    layout: "dashboard",
+    layout: "admin",
     pages: [
       {
         icon: <HomeIcon {...icon} />,
@@ -66,7 +68,22 @@ export const routes = [
       },
     ],
   },
- 
 ];
-
-export default routes;
+export const routesSalesman = [
+{
+  layout: "salesman",
+  pages: [
+    {
+      icon: <HomeIcon {...icon} />,
+      name: "dashboard",
+      path: "/home",
+      element: <HomeSalesman />,
+    },
+    {
+      icon: <UserIcon  {...icon} />,
+      name: "Salesman",
+      path: "/form",
+      element: <Collection/>,
+    },
+  ],
+}]

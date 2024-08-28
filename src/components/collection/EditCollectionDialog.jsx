@@ -3,41 +3,41 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } 
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch } from 'react-redux';
-import { editCustomer ,customer} from '@/store/action/customer.action';
+import { editCollection ,collection} from '@/store/action/collection.action';
 
-const EditCustomerDialog = ({ open, onClose, customerData }) => {
+const EditCollectionDialog = ({ open, onClose, collectionData }) => {
   const dispatch = useDispatch();
 
   const validationSchema = Yup.object({
-    name: Yup.string().required('Name is required'),
-    email: Yup.string().email('Invalid email address').required('Email is required'),
-    mobile: Yup.string().required('Mobile number is required'),
+    customerName: Yup.string().required('Name is required'),
+    amount: Yup.string().required('Amount is required'),
+    date: Yup.string().required('Date is required'),
 
   });
   const fetchData = async () => {
-    await dispatch(customer());
+    await dispatch(collection());
   };
 
   const formik = useFormik({
     initialValues: {
-      name: '',
-      email: '',
-      mobile: '',
+        customerName: '',
+        amount: '',
+        date: '',
   
     },
     validationSchema,
     onSubmit:async (values) => {
-      await dispatch(editCustomer(customerData._id,values));
+      await dispatch(editCollection(collectionData._id,values));
       onClose();
       fetchData()
     },
   });
 
   useEffect(() => {
-    if (customerData) {
-      formik.setValues({ ...customerData });
+    if (collectionData) {
+      formik.setValues({ ...collectionData });
     }
-  }, [customerData]);
+  }, [collectionData]);
 
 
   return (
@@ -45,35 +45,36 @@ const EditCustomerDialog = ({ open, onClose, customerData }) => {
       <DialogTitle>Edit Customer</DialogTitle>
       <DialogContent>
         <TextField
-          label="Name"
-          name="name"
-          value={formik.values.name}
+          label="CustomerName"
+          name="customerName"
+          value={formik.values.customerName}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          error={formik.touched.name && Boolean(formik.errors.name)}
-          helperText={formik.touched.name && formik.errors.name}
+          error={formik.touched.customerName && Boolean(formik.errors.customerName)}
+          helperText={formik.touched.customerName && formik.errors.customerName}
           fullWidth
           margin="normal"
         />
         <TextField
-          label="Email"
-          name="email"
-          value={formik.values.email}
+          label="Amount"
+          name="amount"
+          value={formik.values.amount}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          error={formik.touched.email && Boolean(formik.errors.email)}
-          helperText={formik.touched.email && formik.errors.email}
+          error={formik.touched.amount && Boolean(formik.errors.amount)}
+          helperText={formik.touched.amount && formik.errors.amount}
           fullWidth
           margin="normal"
         />
         <TextField
-          label="Mobile"
-          name="mobile"
-          value={formik.values.mobile}
+          label="Date"
+          name="date"
+          type="date"
+          value={formik.values.date}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          error={formik.touched.mobile && Boolean(formik.errors.mobile)}
-          helperText={formik.touched.mobile && formik.errors.mobile}
+          error={formik.touched.date && Boolean(formik.errors.date)}
+          helperText={formik.touched.date && formik.errors.date}
           fullWidth
           margin="normal"
         />
@@ -87,4 +88,4 @@ const EditCustomerDialog = ({ open, onClose, customerData }) => {
   );
 };
 
-export default EditCustomerDialog;
+export default EditCollectionDialog;

@@ -1,6 +1,4 @@
-
-
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   CardHeader,
@@ -8,43 +6,40 @@ import {
   Typography,
   Button,
 } from "@material-tailwind/react";
-import AddSalespersonDialog from '@/components/salesperson/AddSalespersonDialog ';
-import EditSalespersonDialog from '@/components/salesperson/EditSalespersonDialog';
-import ViewSalespersonDialog from '@/components/salesperson/ViewSalespersonDialog';
-import DeleteSalespersonDialog from '@/components/salesperson/DeleteSalespersonDialog ';
+import AddCustomerDialog from '@/components/customer/AddCustomerDialog';
+import EditCustomerDialog from '@/components/customer/EditCustomerDialog';
+import ViewCustomerDialog from '@/components/customer/ViewCustomerDialog';
+import DeleteCustomerDialog from '@/components/customer/DeleteCustomerDialog';
+import { customer } from '@/store/action/customer.action';
+import { useDispatch, useSelector } from 'react-redux';
 
 
-export const salespersonsData = [
-    {
-      id: 1,
-      name: "Alice Johnson",
-      email: "alicejohnson@example.com",
-      mobile: "+1 (555) 987-6543",
-      date: "20 Mar 2023",
-    },
-    {
-      id: 2,
-      name: "Bob Brown",
-      email: "bobbrown@example.com",
-      mobile: "+1 (555) 456-7890",
-      date: "25 Apr 2023",
-    },
-    // Add more salesperson entries as needed
-  ];
 
 const PAGE_SIZE = 5;
 
-const ViewSalesman = () => {
+const View = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedSalespersonId, setSelectedSalespersonId] = useState(null);
+  const [selectedCustomerId, setSelectedCustomerId] = useState(null);
 
-  const totalPages = Math.ceil(salespersonsData.length / PAGE_SIZE);
+  const dispatch = useDispatch()
 
-  const currentData = salespersonsData.slice(
+  const customersData = useSelector((state) => state.customerReducer.customer);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await dispatch(customer());
+    };
+  
+    fetchData();
+  }, []); // Empty dependency array ensures it runs only once when the component mounts.
+  
+  const totalPages = Math.ceil(customersData.length / PAGE_SIZE);
+
+  const currentData = customersData.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE
   );
@@ -62,7 +57,7 @@ const ViewSalesman = () => {
   };
 
   const handleOpenEditDialog = (id) => {
-    setSelectedSalespersonId(id);
+    setSelectedCustomerId(id);
     setEditDialogOpen(true);
   };
 
@@ -71,7 +66,7 @@ const ViewSalesman = () => {
   };
 
   const handleOpenViewDialog = (id) => {
-    setSelectedSalespersonId(id);
+    setSelectedCustomerId(id);
     setViewDialogOpen(true);
   };
 
@@ -80,7 +75,7 @@ const ViewSalesman = () => {
   };
 
   const handleOpenDeleteDialog = (id) => {
-    setSelectedSalespersonId(id);
+    setSelectedCustomerId(id);
     setDeleteDialogOpen(true);
   };
 
@@ -88,26 +83,24 @@ const ViewSalesman = () => {
     setDeleteDialogOpen(false);
   };
 
-  const handleAddSalesperson = (newSalesperson) => {
-    // Logic to add the new salesperson
-    console.log('New Salesperson:', newSalesperson);
+  const handleAddCustomer = (newCustomer) => {
+    // Logic to add the new customer
+    console.log('New Customer:', newCustomer);
     handleCloseAddDialog();
   };
 
-  const handleEditSalesperson = (updatedSalesperson) => {
-    // Logic to update the salesperson by ID
-    console.log('Updated Salesperson:', updatedSalesperson);
+  const handleEditCustomer = (updatedCustomer) => {
+    // Logic to update the customer by ID
+    console.log('Updated Customer:', updatedCustomer);
     // handleCloseEditDialog();
   };
 
-  const handleDeleteSalesperson = () => {
-    // Logic to delete the salesperson by ID
-    console.log('Deleted Salesperson ID:', selectedSalespersonId);
+  const handleDeleteCustomer = () => {
     handleCloseDeleteDialog();
   };
 
-  const getSalespersonById = (id) => {
-    return salespersonsData.find(salesperson => salesperson.id === id);
+  const getCustomerById = (id) => {
+    return customersData.find(customer => customer._id === id);
   };
 
   return (
@@ -115,7 +108,7 @@ const ViewSalesman = () => {
       <Card>
         <CardHeader variant="gradient" color="gray" className="mb-8 p-6 flex justify-between items-center">
           <Typography variant="h6" color="white">
-            Salesperson List
+            Customer List
           </Typography>
           <Button
             color="light-blue"
@@ -123,14 +116,14 @@ const ViewSalesman = () => {
             className="ml-auto"
             onClick={handleOpenAddDialog}
           >
-            Add Salesperson
+            Add Customer
           </Button>
         </CardHeader>
         <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
           <table className="w-full min-w-[640px] table-auto">
             <thead>
               <tr>
-                {["Name", "Email", "Mobile", "Date", "Actions"].map((el) => (
+                {["Name", "Email", "Mobile", "Actions"].map((el) => (
                   <th
                     key={el}
                     className="border-b border-blue-gray-50 py-3 px-5 text-left"
@@ -146,8 +139,8 @@ const ViewSalesman = () => {
               </tr>
             </thead>
             <tbody>
-              {currentData.map((salesperson, key) => {
-                const { id, name, email, mobile, date } = salesperson;
+              {currentData.map((customer, key) => {
+                const { _id, name, email, mobile } = customer;
                 const className = `py-3 px-5 ${
                   key === currentData.length - 1
                     ? ""
@@ -155,7 +148,7 @@ const ViewSalesman = () => {
                 }`;
 
                 return (
-                  <tr key={id}>
+                  <tr key={_id}>
                     <td className={className}>
                       <Typography
                         variant="small"
@@ -175,31 +168,27 @@ const ViewSalesman = () => {
                         {mobile}
                       </Typography>
                     </td>
-                    <td className={className}>
-                      <Typography className="text-xs font-semibold text-blue-gray-600">
-                        {date}
-                      </Typography>
-                    </td>
+                  
                     <td className={className}>
                       <div className="flex gap-2">
                         <Button
                           color="light-blue"
                           size="sm"
-                          onClick={() => handleOpenViewDialog(id)}
+                          onClick={() => handleOpenViewDialog(_id)}
                         >
                           View
                         </Button>
                         <Button
                           color="light-blue"
                           size="sm"
-                          onClick={() => handleOpenEditDialog(id)}
+                          onClick={() => handleOpenEditDialog(_id)}
                         >
                           Edit
                         </Button>
                         <Button
                           color="red"
                           size="sm"
-                          onClick={() => handleOpenDeleteDialog(id)}
+                          onClick={() => handleOpenDeleteDialog(_id)}
                         >
                           Delete
                         </Button>
@@ -230,32 +219,31 @@ const ViewSalesman = () => {
         </div>
       </Card>
 
-      <AddSalespersonDialog
+      <AddCustomerDialog
         open={dialogOpen}
         onClose={handleCloseAddDialog}
-        onAddSalesperson={handleAddSalesperson}
-      />
+       />
 
-      <EditSalespersonDialog
+      <EditCustomerDialog
         open={editDialogOpen}
         onClose={handleCloseEditDialog}
-        salesperson={getSalespersonById(selectedSalespersonId)}
-        onEditSalesperson={handleEditSalesperson}
+        customerData={getCustomerById(selectedCustomerId)}
+    
       />
 
-      <ViewSalespersonDialog
+      <ViewCustomerDialog
         open={viewDialogOpen}
         onClose={handleCloseViewDialog}
-        salesperson={getSalespersonById(selectedSalespersonId)}
+        customer={getCustomerById(selectedCustomerId)}
       />
 
-      <DeleteSalespersonDialog
+      <DeleteCustomerDialog
         open={deleteDialogOpen}
         onClose={handleCloseDeleteDialog}
-        onDeleteSalesperson={handleDeleteSalesperson}
+        onDeleteCustomer={selectedCustomerId}
       />
     </div>
   );
 };
 
-export default ViewSalesman;
+export default View;
