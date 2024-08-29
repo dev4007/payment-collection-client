@@ -5,22 +5,23 @@ import {
   CardBody,
   Typography,Chip
 } from "@material-tailwind/react";
-import { paymentHistory } from '@/store/action/payment.action';
+import { paymentVerified } from '@/store/action/payment.action';
 import { useDispatch, useSelector } from 'react-redux';
+
 
 const PAGE_SIZE = 5;
 
-const Payment = () => {
+const PaymentVerify = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
 
   const dispatch = useDispatch()
 
-  const paymentsData = useSelector((state) => state.paymentReducer.paymentHistory);
+  const paymentsData = useSelector((state) => state.paymentReducer.paymentVerified);
 
   useEffect(() => {
     const fetchData = async () => {
-      await dispatch(paymentHistory());
+      await dispatch(paymentVerified());
     };
   
     fetchData();
@@ -73,7 +74,7 @@ const Payment = () => {
       <Card>
         <CardHeader variant="gradient" color="gray" className="mb-8 p-6 flex justify-between items-center">
           <Typography variant="h6" color="white">
-            Payment List
+            Payment Verify List
           </Typography>
         </CardHeader>
         <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
@@ -117,7 +118,7 @@ const Payment = () => {
                     </td>
                     <td className={className}>
                       <Typography className="text-xs font-normal text-blue-gray-500">
-                        {customerName?.name || "NA"}
+                        {customerName.name}
                       </Typography>
                     </td>
                     <td className={className}>
@@ -186,4 +187,6 @@ const Payment = () => {
   );
 };
 
-export default Payment;
+export default PaymentVerify;
+
+

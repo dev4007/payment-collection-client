@@ -27,7 +27,7 @@ const Collection = () => {
   const dispatch = useDispatch()
 
   const collectionData = useSelector((state) => state.collectionReducer.collectionList);
-
+ 
   useEffect(() => {
     const fetchData = async () => {
       await dispatch(collection());
@@ -36,9 +36,9 @@ const Collection = () => {
     fetchData();
   }, []); // Empty dependency array ensures it runs only once when the component mounts.
   
-  const totalPages = Math.ceil(collectionData.length / PAGE_SIZE);
+  const totalPages = Math.ceil(collectionData?.length / PAGE_SIZE);
 
-  const currentData = collectionData.slice(
+  const currentData = collectionData?.slice(
     (currentPage - 1) * PAGE_SIZE,
     currentPage * PAGE_SIZE
   );
@@ -154,7 +154,7 @@ const Collection = () => {
                         color="blue-gray"
                         className="font-semibold"
                       >
-                        {customerName}
+                        {customerName?.name}
                       </Typography>
                     </td>
                     <td className={className}>
@@ -164,7 +164,7 @@ const Collection = () => {
                     </td>
                     <td className={className}>
                       <Typography className="text-xs font-normal text-blue-gray-500">
-                        {date}
+                        {new Date(date).toISOString().split('T')[0]}
                       </Typography>
                     </td>
                   

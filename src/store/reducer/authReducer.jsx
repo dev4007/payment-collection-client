@@ -10,6 +10,7 @@ const initialState = {
     switch (type) {
       case "LOGIN":
       return {
+        ...state,
         isAuthenticated: true,
         user: action.payload,
       };

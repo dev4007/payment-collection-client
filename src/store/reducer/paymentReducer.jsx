@@ -1,7 +1,7 @@
 
 const initialState = {
     paymentHistory: [], // Array to hold user data
-
+    paymentVerified:[]
   
   };
   
@@ -13,6 +13,11 @@ const initialState = {
       return {
         ...state,
         paymentHistory :action.payload,
+      };
+      case 'PAYMENT_VERIFIED':
+      return {
+        ...state,
+        paymentVerified:action.payload,
       };
 
       default:

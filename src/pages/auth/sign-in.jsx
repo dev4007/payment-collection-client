@@ -36,7 +36,7 @@ export function SignIn() {
       } else if (role === 'salesman') {
         navigate("/salesman/home");
       } else if (role === 'customer') {
-        navigate("/customer");
+        navigate("/customer/home");
       } else {
         toast.error("No User Available");
       }

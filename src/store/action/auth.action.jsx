@@ -23,7 +23,7 @@ export const login = (email, password,role) => {
       // Make an actual API request to your backend
       const response = await axiosInstance.post('/auth/login', { email, password });
       const { user, token } = response.data;
-      localStorage.setItem('userData', JSON.stringify(user));
+      localStorage.setItem('userData', JSON.stringify({user:user}));
       localStorage.setItem('token', token);
       dispatch({
         type: 'LOGIN',
@@ -57,3 +57,20 @@ export const logout = () => {
     }
   };
 };
+
+export const resetPassword = (data) => {
+    return async (dispatch) => {
+      try {
+        const token = localStorage.getItem('token');
+        await axiosInstance.post(`/auth/reset-password`,data,{
+           headers: {
+             Authorization: `Bearer ${token}`,
+           },
+         })
+         return true
+      } catch (error) {
+        toast.error(error.response.data.message || "Something went wrong")
+        return false;
+      }
+    };
+  };

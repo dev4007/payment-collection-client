@@ -13,6 +13,10 @@ import ViewSalesman from './pages/Admin/salesman/ViewSalesman';
 import Payment from "./pages/Admin/payment/payment";
 import Collection from "./pages/Salesman/collection";
 import HomeSalesman from "./pages/Salesman/Dashboard/home";
+import AdminProfile from "./pages/Admin/profile/adminProfile";
+import History from "./pages/Customer/History/history";
+import CustomerDashboard from "./pages/Customer/Dashboard/customerDashboard";
+import PaymentVerify from "./pages/Customer/PaymentVerify/paymentVerify";
 
 
 const icon = {
@@ -47,13 +51,14 @@ export const routes = [
         path: "/payment",
         element: <Payment />,
       },
-      
       {
         icon: <UserCircleIcon {...icon} />,
         name: "profile",
         path: "/profile",
-        element: <Profile />,
+        element: <AdminProfile />,
       },
+      
+
       {
         icon: <TableCellsIcon {...icon} />,
         name: "tables",
@@ -82,8 +87,40 @@ export const routesSalesman = [
     {
       icon: <UserIcon  {...icon} />,
       name: "Salesman",
-      path: "/form",
+      path: "/customers",
       element: <Collection/>,
+    },
+    {
+      icon: <UserCircleIcon {...icon} />,
+      name: "profile",
+      path: "/profile",
+      element: <AdminProfile />,
     },
   ],
 }]
+
+export const routesCustomer = [
+  {
+    layout: "customer",
+    pages: [
+      {
+        icon: <HomeIcon {...icon} />,
+        name: "dashboard",
+        path: "/home",
+        element: <CustomerDashboard/>,
+      },
+      {
+        icon: <CreditCardIcon {...icon} />,
+        name: "verifyPayment",
+        path: "/verify",
+        element: <PaymentVerify />,
+      },
+
+      {
+        icon: <UserCircleIcon {...icon} />,
+        name: "profile",
+        path: "/profile",
+        element: <AdminProfile />,
+      },
+    ],
+  }]

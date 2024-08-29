@@ -7,31 +7,31 @@ import {
   UsersIcon,
 } from "@heroicons/react/24/solid";
 import { useDispatch, useSelector } from "react-redux";
-import { collectionCount } from "@/store/action/home.action";
+import { customerVerifyCount } from "@/store/action/home.action";
 
 // Map dynamic keys to their corresponding icons and titles
 const iconMapping = {
-  totalAmount: {
-    title: "Total Amount",
+  customerVerifySuccessCount: {
+    title: "Total Verified",
     icon: BanknotesIcon,
-    formatValue: (value) => `₹${value}`, // Formatting for amount
+    formatValue: (value) => value.toString(), // Formatting for amount
   },
-  customerCount: {
-    title: "Customers",
+  customerVerifyPendingCount: {
+    title: "Total Pending",
     icon: UsersIcon,
     formatValue: (value) => value.toString(), // Convert to string
   },
 };
 
-export function Home() {
+export function CustomerDashboard() {
 
   const dispatch = useDispatch()
 
-  const dynamicData = useSelector((state) => state.homeReducer.salesmanTotal);
+  const dynamicData = useSelector((state) => state.homeReducer.verifyCustomer);
 
   useEffect(() => {
     const fetchData = async () => {
-      await dispatch(collectionCount());
+      await dispatch(customerVerifyCount());
     };
   
     fetchData();
@@ -41,7 +41,6 @@ export function Home() {
   // Create statisticsCardsData from dynamicData and iconMapping
   const statisticsCardsData = Object.keys(dynamicData).map((key) => {
     const { title, icon, formatValue } = iconMapping[key];
-    console.log("🚀 ~ statisticsCardsData ~ formatValue:", formatValue)
     return {
       title,
       value: formatValue(dynamicData[key]),
@@ -70,4 +69,6 @@ export function Home() {
   );
 }
 
-export default Home;
+
+
+export default CustomerDashboard

@@ -1,6 +1,9 @@
 
 const initialState = {
     total: [], // Array to hold user data
+    salesmanTotal: [], // Array to hold user data
+    verifyCustomer:[]
+
 
   
   };
@@ -14,6 +17,18 @@ const initialState = {
         ...state,
         total :action.payload,
       };
+
+      case 'COLLECTION_COUNT':
+      return {
+        ...state,
+        salesmanTotal :action.payload,
+      };
+      case 'VERIFY_COUNT':
+      return {
+        ...state,
+        verifyCustomer :action.payload,
+      };
+
 
       default:
         return state;
